@@ -398,6 +398,27 @@ def search_tmall(query: str) -> tuple[list[dict[str, Any]], str]:
     return deterministic_cards("tmall", query, rows), "uitest+ui_tree_rule"
 
 
+def filter_phone_matches(items: list[dict[str, Any]], query: str) -> list[dict[str, Any]]:
+    query_norm = normalize_token(query)
+    if "mate80" not in query_norm:
+        return items
+
+    accessory_markers = (
+        "适用", "手机壳", "保护壳", "保护套", "钢化膜", "贴膜", "镜头膜",
+        "充电器", "充电线", "数据线", "支架", "耳机", "配件",
+    )
+    filtered: list[dict[str, Any]] = []
+    for item in items:
+        title = str(item.get("title") or "").strip()
+        title_norm = normalize_token(title)
+        if "mate80" not in title_norm:
+            continue
+        if any(marker in title for marker in accessory_markers):
+            continue
+        filtered.append(item)
+    return filtered
+
+
 def search_taobao(query: str) -> tuple[list[dict[str, Any]], str]:
     bundle, ability = BUNDLES["taobao"]
     launch(bundle, ability)
@@ -418,12 +439,15 @@ def search_taobao(query: str) -> tuple[list[dict[str, Any]], str]:
         except SkillError:
             pass
     img = screenshot("shopping_compare_taobao")
-    items = extract_vision("taobao", query, img)
+    items = filter_phone_matches(extract_vision("taobao", query, img), query)
     if items:
         return items, "uitest+vision"
     time.sleep(3.0)
     img = screenshot("shopping_compare_taobao_retry")
-    return extract_vision("taobao", query, img), "uitest+vision_retry"
+    return filter_phone_matches(
+        extract_vision("taobao", query, img),
+        query,
+    ), "uitest+vision_retry"
 
 
 def normalize_item(item: dict[str, Any], platform: str) -> dict[str, Any]:
