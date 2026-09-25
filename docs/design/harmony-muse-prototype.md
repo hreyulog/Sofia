@@ -39,9 +39,25 @@ The HarmonyOS implementation keeps those boundaries while replacing the Android 
 
 ## Prototype directories
 
-- `HarmonyOS/harmony-muse-app/` — native two-role HarmonyOS UI.
+- `Android/app/` — existing Sofia Jetpack Compose UI; preserved unchanged.
+- `HarmonyOS/harmony-muse-app/` — parallel HarmonyOS ArkUI / ArkTS front end for the two-device product.
 - `skills/shopping-compare/` — first end-to-end Skill.
 - `prototype/harmony-muse/` — development AgentRuntime, MiniMax proxy and Relay.
+
+## Front-end strategy
+
+Harmony Muse does **not** replace Sofia's Android front end. The repository intentionally keeps two
+platform front ends:
+
+```
+Sofia product UI
+├── Android/app/                  Jetpack Compose
+└── HarmonyOS/harmony-muse-app/   ArkUI / ArkTS
+```
+
+The HarmonyOS front end adapts the same product concepts — conversation-first task entry, runtime
+status, task cards, result cards and approval-oriented execution — to ArkUI while adding the
+PRIMARY / EXECUTOR two-device roles required by the Muse-style architecture.
 
 ## Validated scenario
 

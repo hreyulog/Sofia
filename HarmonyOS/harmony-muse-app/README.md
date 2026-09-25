@@ -2,10 +2,18 @@
 
 Native HarmonyOS two-device prototype UI.
 
+This is a **parallel ArkUI / ArkTS front end**. It does not replace or modify Sofia's existing
+`Android/app/` Jetpack Compose UI.
+
 A single HAP can run in two roles:
 
 - **PRIMARY** — task entry, progress, approval/result display.
 - **EXECUTOR** — spare-phone task receiver and execution status.
+
+The primary-phone screen follows the same conversation-first product shape as Sofia: a top app bar,
+connected-device state, assistant/user message surfaces, a task status card, a rich result card and
+a bottom composer. The executor screen reuses the visual language but focuses on device/runtime
+state and the currently delegated task.
 
 The current prototype identifies known development devices by product model in `Index.ets`. Before generalizing the prototype, replace model-based role assignment with device pairing / persisted role configuration.
 

@@ -395,140 +395,378 @@ struct Index {
     }
   }
 
+  private phaseTitle(): string {
+    if (this.taskPhase === 'SUBMITTED') {
+      return '已发送到备用机';
+    }
+    if (this.taskPhase === 'ACCEPTED') {
+      return '备用机已接单';
+    }
+    if (this.taskPhase === 'WORKING') {
+      return '正在执行';
+    }
+    if (this.taskPhase === 'COMPLETED') {
+      return '任务已完成';
+    }
+    if (this.taskPhase === 'FAILED') {
+      return '任务失败';
+    }
+    if (this.taskPhase === 'SUBMITTING') {
+      return '正在发送';
+    }
+    return '等待任务';
+  }
+
+  private phaseMark(): string {
+    if (this.taskPhase === 'COMPLETED') {
+      return '✓';
+    }
+    if (this.taskPhase === 'FAILED') {
+      return '!';
+    }
+    if (this.taskPhase === 'WORKING' || this.taskPhase === 'ACCEPTED' ||
+      this.taskPhase === 'SUBMITTED' || this.taskPhase === 'SUBMITTING') {
+      return '●';
+    }
+    return '○';
+  }
+
+  private roleTitle(): string {
+    return this.role === 'PRIMARY' ? '主手机' : '执行手机';
+  }
+
+  private connectionText(): string {
+    if (this.relayState === 'ONLINE' && this.runtimeState === 'RUNNING') {
+      return '已连接';
+    }
+    if (this.relayState === 'CHECKING') {
+      return '连接中';
+    }
+    return '连接异常';
+  }
+
   build() {
-    Scroll() {
-      Column({ space: 16 }) {
-        Text('Sofia Harmony Muse')
-          .fontSize(30)
-          .fontWeight(FontWeight.Bold)
-          .width('100%')
-
-        Text(this.role === 'PRIMARY'
-          ? '把任务交给备用手机，它会在后台替你处理'
-          : '这台备用手机正在作为你的专属 AI 执行环境')
-          .fontSize(15)
-          .fontColor('#666666')
-          .width('100%')
-
-        Row() {
-          Column({ space: 4 }) {
-            Text(this.role)
-              .fontSize(18)
-              .fontWeight(FontWeight.Bold)
-            Text(this.deviceModel)
-              .fontSize(13)
-              .fontColor('#666666')
-          }
-          .alignItems(HorizontalAlign.Start)
-
-          Blank()
-
-          Column({ space: 4 }) {
-            Text(this.runtimeState)
-              .fontSize(14)
-              .fontWeight(FontWeight.Bold)
-            Text('Relay ' + this.relayState)
-              .fontSize(12)
-              .fontColor('#666666')
-          }
-          .alignItems(HorizontalAlign.End)
+    Column() {
+      // Sofia-style top app bar. The Android/Compose UI remains untouched;
+      // this is the HarmonyOS ArkUI adaptation.
+      Row() {
+        Column({ space: 2 }) {
+          Text('Sofia')
+            .fontSize(23)
+            .fontWeight(FontWeight.Bold)
+            .fontColor('#15171A')
+          Text('Harmony Muse')
+            .fontSize(12)
+            .fontColor('#777C84')
         }
-        .width('100%')
-        .padding(16)
-        .backgroundColor('#F3F5F7')
+        .alignItems(HorizontalAlign.Start)
+
+        Blank()
+
+        Row({ space: 7 }) {
+          Text('●')
+            .fontSize(10)
+            .fontColor(this.relayState === 'ONLINE' ? '#28A36A' : '#D65C5C')
+          Text(this.connectionText())
+            .fontSize(13)
+            .fontColor('#50545B')
+        }
+        .padding({ left: 11, right: 11, top: 7, bottom: 7 })
+        .backgroundColor('#F1F2F4')
         .borderRadius(18)
 
-        if (this.role === 'PRIMARY') {
-          Column({ space: 12 }) {
-            Text('What should I do for you?')
-              .fontSize(20)
-              .fontWeight(FontWeight.Bold)
-              .width('100%')
+        Text('⋮')
+          .fontSize(24)
+          .fontColor('#4B4F56')
+          .margin({ left: 14 })
+      }
+      .height(76)
+      .width('100%')
+      .padding({ left: 20, right: 20, top: 8, bottom: 4 })
+      .backgroundColor('#FFFFFF')
 
+      Scroll() {
+        Column({ space: 14 }) {
+          // Connected-device card: a compact equivalent of Sofia's runtime status area.
+          Row() {
+            Column({ space: 5 }) {
+              Row({ space: 8 }) {
+                Text(this.role === 'PRIMARY' ? '◉' : '◆')
+                  .fontSize(17)
+                  .fontColor('#26282C')
+                Text(this.roleTitle())
+                  .fontSize(15)
+                  .fontWeight(FontWeight.Medium)
+                  .fontColor('#202226')
+              }
+              Text(this.deviceModel)
+                .fontSize(12)
+                .fontColor('#7A7F87')
+            }
+            .alignItems(HorizontalAlign.Start)
+
+            Blank()
+
+            Column({ space: 4 }) {
+              Text(this.role === 'PRIMARY' ? 'Nova 执行机' : '等待主手机任务')
+                .fontSize(13)
+                .fontColor('#4F545B')
+              Text(this.runtimeState + ' · Relay ' + this.relayState)
+                .fontSize(11)
+                .fontColor('#8B9097')
+            }
+            .alignItems(HorizontalAlign.End)
+          }
+          .width('100%')
+          .padding(15)
+          .backgroundColor('#FFFFFF')
+          .borderRadius(16)
+
+          if (this.role === 'PRIMARY') {
+            // Assistant intro bubble.
+            Row() {
+              Column({ space: 5 }) {
+                Text('S')
+                  .fontSize(14)
+                  .fontWeight(FontWeight.Bold)
+                  .fontColor('#FFFFFF')
+              }
+              .width(30)
+              .height(30)
+              .justifyContent(FlexAlign.Center)
+              .alignItems(HorizontalAlign.Center)
+              .backgroundColor('#202226')
+              .borderRadius(15)
+
+              Column({ space: 5 }) {
+                Text('Sofia')
+                  .fontSize(12)
+                  .fontWeight(FontWeight.Medium)
+                  .fontColor('#60656D')
+                Text('把目标告诉我。我会把任务交给你的备用手机持续执行，完成后把结果带回来。')
+                  .fontSize(15)
+                  .fontColor('#25282D')
+                  .lineHeight(22)
+              }
+              .alignItems(HorizontalAlign.Start)
+              .layoutWeight(1)
+              .margin({ left: 10 })
+            }
+            .width('100%')
+            .padding(14)
+            .backgroundColor('#FFFFFF')
+            .borderRadius(16)
+
+            if (this.currentGoal.length > 0) {
+              Row() {
+                Blank()
+                Column({ space: 5 }) {
+                  Text('你')
+                    .fontSize(11)
+                    .fontColor('#80858C')
+                  Text(this.currentGoal)
+                    .fontSize(15)
+                    .fontColor('#FFFFFF')
+                    .lineHeight(22)
+                }
+                .alignItems(HorizontalAlign.Start)
+                .padding(14)
+                .constraintSize({ maxWidth: '84%' })
+                .backgroundColor('#25272B')
+                .borderRadius(16)
+              }
+              .width('100%')
+            }
+          }
+
+          // Task card shared by both roles.
+          Column({ space: 10 }) {
+            Row() {
+              Row({ space: 9 }) {
+                Text(this.phaseMark())
+                  .fontSize(17)
+                  .fontWeight(FontWeight.Bold)
+                  .fontColor(this.taskPhase === 'FAILED' ? '#C44949' :
+                    (this.taskPhase === 'COMPLETED' ? '#25875A' : '#555A61'))
+                Column({ space: 2 }) {
+                  Text(this.phaseTitle())
+                    .fontSize(16)
+                    .fontWeight(FontWeight.Medium)
+                    .fontColor('#25282D')
+                  Text(this.activityText)
+                    .fontSize(12)
+                    .fontColor('#747A82')
+                }
+                .alignItems(HorizontalAlign.Start)
+              }
+              Blank()
+              if (this.currentTaskId !== '-') {
+                Text('任务')
+                  .fontSize(11)
+                  .fontColor('#8A8F96')
+                  .padding({ left: 9, right: 9, top: 5, bottom: 5 })
+                  .backgroundColor('#F1F2F4')
+                  .borderRadius(12)
+              }
+            }
+            .width('100%')
+
+            if (this.currentTaskId !== '-') {
+              Text(this.currentTaskId)
+                .fontSize(10)
+                .fontColor('#9A9EA4')
+                .width('100%')
+            }
+
+            if (this.role === 'EXECUTOR' && this.currentGoal.length > 0) {
+              Text(this.currentGoal)
+                .fontSize(14)
+                .fontColor('#4B5057')
+                .lineHeight(20)
+                .width('100%')
+            }
+
+            if (this.taskPhase === 'WORKING') {
+              Row({ space: 8 }) {
+                Text('淘宝')
+                  .fontSize(11)
+                  .fontColor('#656A72')
+                  .padding({ left: 9, right: 9, top: 5, bottom: 5 })
+                  .backgroundColor('#F3F4F5')
+                  .borderRadius(11)
+                Text('天猫')
+                  .fontSize(11)
+                  .fontColor('#656A72')
+                  .padding({ left: 9, right: 9, top: 5, bottom: 5 })
+                  .backgroundColor('#F3F4F5')
+                  .borderRadius(11)
+                Text('京东')
+                  .fontSize(11)
+                  .fontColor('#656A72')
+                  .padding({ left: 9, right: 9, top: 5, bottom: 5 })
+                  .backgroundColor('#F3F4F5')
+                  .borderRadius(11)
+              }
+              .width('100%')
+            }
+          }
+          .width('100%')
+          .padding(16)
+          .backgroundColor('#FFFFFF')
+          .borderRadius(16)
+
+          if (this.resultText.length > 0) {
+            Row() {
+              Column() {
+                Text('S')
+                  .fontSize(14)
+                  .fontWeight(FontWeight.Bold)
+                  .fontColor('#FFFFFF')
+              }
+              .width(30)
+              .height(30)
+              .justifyContent(FlexAlign.Center)
+              .alignItems(HorizontalAlign.Center)
+              .backgroundColor('#202226')
+              .borderRadius(15)
+
+              Column({ space: 8 }) {
+                Row() {
+                  Text('任务结果')
+                    .fontSize(14)
+                    .fontWeight(FontWeight.Medium)
+                    .fontColor('#303339')
+                  Blank()
+                  if (this.resultModel.length > 0) {
+                    Text(this.resultModel)
+                      .fontSize(10)
+                      .fontColor('#858A91')
+                  }
+                }
+                .width('100%')
+
+                Text(this.resultText)
+                  .fontSize(14)
+                  .fontColor('#30343A')
+                  .lineHeight(21)
+                  .width('100%')
+              }
+              .alignItems(HorizontalAlign.Start)
+              .layoutWeight(1)
+              .margin({ left: 10 })
+            }
+            .width('100%')
+            .padding(15)
+            .backgroundColor('#FFFFFF')
+            .borderRadius(16)
+          }
+
+          if (this.role === 'EXECUTOR') {
+            Column({ space: 7 }) {
+              Text('执行机模式')
+                .fontSize(13)
+                .fontWeight(FontWeight.Medium)
+                .fontColor('#4D5259')
+              Text('这台手机会在收到任务后打开真实 App、运行 Skill，并把进度和结果同步回主手机。')
+                .fontSize(13)
+                .fontColor('#777C84')
+                .lineHeight(19)
+            }
+            .alignItems(HorizontalAlign.Start)
+            .width('100%')
+            .padding(15)
+            .backgroundColor('#ECEEF1')
+            .borderRadius(16)
+          }
+        }
+        .width('100%')
+        .padding({ left: 16, right: 16, top: 12, bottom: 18 })
+      }
+      .layoutWeight(1)
+      .width('100%')
+      .backgroundColor('#F6F7F8')
+
+      if (this.role === 'PRIMARY') {
+        Column({ space: 9 }) {
+          Row({ space: 9 }) {
             TextInput({
               text: this.goal,
-              placeholder: '交代一个任务...'
+              placeholder: '给 Sofia 一个任务…'
             })
-              .height(54)
-              .width('100%')
+              .height(50)
+              .layoutWeight(1)
+              .backgroundColor('#F3F4F5')
+              .borderRadius(14)
+              .fontSize(14)
               .onChange((value: string) => {
                 this.goal = value;
               })
 
-            Button('交给备用机')
-              .height(52)
-              .width('100%')
+            Button('发送')
+              .height(50)
+              .width(76)
+              .fontSize(14)
+              .fontWeight(FontWeight.Medium)
+              .backgroundColor('#25272B')
+              .borderRadius(14)
               .onClick(() => {
                 this.submitTask();
               })
           }
           .width('100%')
-          .padding(18)
-          .backgroundColor('#EEF7FF')
-          .borderRadius(18)
-        }
 
-        Column({ space: 8 }) {
-          Text('Task')
-            .fontSize(18)
-            .fontWeight(FontWeight.Bold)
-            .width('100%')
-
-          Text(this.taskPhase)
-            .fontSize(24)
-            .fontWeight(FontWeight.Bold)
-            .width('100%')
-
-          Text(this.currentTaskId)
-            .fontSize(12)
-            .fontColor('#777777')
-            .width('100%')
-
-          if (this.currentGoal.length > 0) {
-            Text(this.currentGoal)
-              .fontSize(14)
-              .fontColor('#444444')
-              .width('100%')
-          }
-
-          Text(this.activityText)
-            .fontSize(14)
-            .fontColor('#666666')
+          Text('任务将在备用手机上继续运行 · 敏感操作需要单独确认')
+            .fontSize(10)
+            .fontColor('#9A9EA4')
             .width('100%')
         }
+        .padding({ left: 16, right: 16, top: 11, bottom: 13 })
+        .backgroundColor('#FFFFFF')
         .width('100%')
-        .padding(18)
-        .backgroundColor('#F8F8F8')
-        .borderRadius(18)
-
-        if (this.resultText.length > 0) {
-          Column({ space: 8 }) {
-            Text('Result')
-              .fontSize(18)
-              .fontWeight(FontWeight.Bold)
-              .width('100%')
-
-            if (this.resultModel.length > 0) {
-              Text(this.resultModel)
-                .fontSize(12)
-                .fontColor('#777777')
-                .width('100%')
-            }
-
-            Text(this.resultText)
-              .fontSize(15)
-              .width('100%')
-          }
-          .width('100%')
-          .padding(18)
-          .backgroundColor('#F3FFF5')
-          .borderRadius(18)
-        }
       }
-      .padding(22)
-      .width('100%')
     }
     .width('100%')
     .height('100%')
+    .backgroundColor('#F6F7F8')
   }
 }
