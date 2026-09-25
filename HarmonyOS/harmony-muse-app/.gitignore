@@ -1,0 +1,11 @@
+/.idea/
+/.hvigor/
+/oh_modules/
+/build/
+/entry/build/
+/entry/oh_modules/
+*.p12
+*.p7b
+*.cer
+local.properties
+PrototypeConfig.local.ets

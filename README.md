@@ -36,6 +36,13 @@ Z.AI API Token 使用 GLM 5.3 Flash。模型凭证仅在手机的“服务与登
 | **敏感操作确认** | 付款、下单等动作默认要求机主逐次确认，并调用系统身份验证 |
 | **会话可恢复** | 支持会话保存、恢复、停止与终态核对，降低断线后重复执行的风险 |
 
+> **Harmony Muse prototype branch**
+>
+> `feature/harmony-muse-prototype` adds a two-device HarmonyOS prototype that reuses
+> Sofia/ChebyAgent's Skill, bridge, relay and task-state ideas while moving the execution
+> computer from a cloud VM / single Android appliance to a user-owned spare HarmonyOS phone.
+> See [Harmony Muse design](docs/design/harmony-muse-prototype.md).
+
 ## 真实手机演示
 
 以下视频来自 Huawei ALN-AL00（Android 12、ARM64）真机。两段演示相互独立，使用中文
@@ -236,6 +243,8 @@ Android 11 及以上版本可直接通过无障碍服务截图；较旧版本可
 | `third_party/termux-app/` | 固定版本的 Termux 上游源码 |
 | `connector/` | PhoneBridge、本地 MCP 和 ACE 记忆适配 |
 | `skills/` | 随 APK 提供的手机任务 Skills |
+| `HarmonyOS/harmony-muse-app/` | Harmony Muse 双设备原型前端：PRIMARY 主手机 + EXECUTOR 备用机 |
+| `prototype/harmony-muse/` | Harmony Muse 开发期 AgentRuntime、MiniMax proxy 与 Relay |
 | `gateway/`、`relay/`、`deploy/` | 保留的分布式/服务器模式，不是 0.7.3 纯手机使用的必需项 |
 | `tools/` | 本地构建、静态检查、来源库存和发布核验工具 |
 | `contracts/`、`fixtures/` | 协议定义与测试夹具 |

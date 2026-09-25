@@ -11,8 +11,14 @@ artifacts/private/
 *.pem
 *.key
 *.p12
+*.p7b
+*.cer
 *.env
 *.idsig
+minimaxtoken.txt
+prototype/harmony-muse/.run/
+prototype/harmony-muse/*.log
+skills/shopping-compare/*.png
 node_modules/
 gateway/data/
 **/.venv/
